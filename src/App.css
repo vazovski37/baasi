@@ -62,3 +62,25 @@ body {
   margin-top: 50px;
 }
 
+.logIn-btn{
+  cursor: pointer;
+  width:fit-content;
+  color: azure;
+  background-color:#282c34;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  font-family: mainFont;
+  font-size: 20px;
+  padding:8px 30px 6px 30px; 
+  border-radius: 12px;
+
+}
+.logIn-btn:hover{
+  background: #1d232d;
+  transition: 0.5s;
+}
+.logIn-btn img{
+  width: 30px;
+}
