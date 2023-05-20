@@ -1,31 +1,49 @@
 body {
   padding: 0;
   margin: 0;
+  background-color: #000000;
+  color: green;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .App {
   display: flex;
   align-items: center;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
+  overflow: hidden;
   flex-direction: column;
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .app-header {
   text-align: center;
-  background-color: #3b5998;
-  color: white;
+  background-color: #000000;
+  color: green;
   width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.sign-out button {
+  all: unset;
+  margin-right: 30px;
+  cursor: pointer;
+}
+.sign-out button{
 }
 
 .app-container {
-  margin-top: 50px;
+  width: 100%;
+  position: relative;
 }
 
 .room {
-  display: flex;
-  flex-direction: column;
 }
 
 .room label {
@@ -37,12 +55,13 @@ body {
 .room input {
   width: 200px;
   height: 30px;
-  border: 2px solid #3b5998;
-  border-radius: 6px;
   padding-left: 5px;
   font-size: 20px;
-  text-align: center;
   margin: 5px;
+  background-color: #000000;
+  color: green;
+  border: 0px;
+  border-bottom: 1px solid green;
 }
 .room button {
   width: 210px;
@@ -53,14 +72,11 @@ body {
   font-size: 20px;
   text-align: center;
   margin: 5px;
-  background-color: #3b5998;
+  background-color: #000000;
   color: white;
   cursor: pointer;
 }
 
-.sign-out {
-  margin-top: 50px;
-}
 
 .logIn-btn{
   cursor: pointer;

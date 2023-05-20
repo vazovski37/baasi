@@ -1,25 +1,39 @@
-import { auth, provider } from "../firebase-config.js";
-import { signInWithPopup } from "firebase/auth";
+import { useState } from "react";
+import { getDoc, doc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { auth, db } from "../firebase-config.js";
 import "../styles/Auth.css";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
-export const Auth = ({ setIsAuth }) => {
-  const signInWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      cookies.set("auth-token", result.user.refreshToken);
+export const Auth = ({ setIsAuth,  }) => {
+  const [secretWord, setSecretWord] = useState("");
+
+  const checkSecretWord = async () => {
+    const secretWordRef = doc(db, "users", secretWord);
+    const secretWordDoc = await getDoc(secretWordRef);
+
+    
+    if (secretWordDoc.exists()) {
+      cookies.set("auth-token", true);
+      cookies.set("user", secretWord)
       setIsAuth(true);
-    } catch (err) {
-      console.error(err);
+    } else {
+      alert("gaiare dzmaa");
     }
   };
+
+  const handleSecretWordChange = (event) => {
+    setSecretWord(event.target.value);
+  };
+
   return (
     <div className="auth">
-      <button onClick={signInWithGoogle} className='logIn-btn'  id='signInWithGoogle' >
-          <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
-            Sign In With Google
+      <label>კოდური სიტყვა {">>>"}</label>
+      <input type="text" value={secretWord} onChange={handleSecretWordChange} />
+      <button onClick={checkSecretWord} className="logIn-btn">
+        შესვლა
       </button>
     </div>
   );
