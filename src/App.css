@@ -7,28 +7,15 @@ body {
   width: 100%;
   height: 100%;
 }
-
-.App {
-  display: flex;
-  align-items: center;
-  width: 100vw;
-  height: 100%;
-  overflow: hidden;
-  flex-direction: column;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+input:focus{
+  border: none;
+  outline: none;
+}
+*{
+  margin: 0;
+  padding: 0;
 }
 
-.app-header {
-  text-align: center;
-  background-color: #000000;
-  color: green;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-
-}
 
 .sign-out button {
   all: unset;
@@ -45,7 +32,9 @@ body {
 
 .room {
 }
-
+li{
+  cursor: pointer;
+}
 .room label {
   text-align: center;
   font-size: 25px;
@@ -76,27 +65,279 @@ body {
   color: white;
   cursor: pointer;
 }
+/* auth */
 
-
-.logIn-btn{
-  cursor: pointer;
-  width:fit-content;
-  color: azure;
-  background-color:#282c34;
-  border: none;
+.auth{
+  margin-top:100px ;
+  width: 100%;
+  height: 100px;
   display: flex;
+  justify-content: center;
   align-items: center;
+  background-color: #000000;
+  flex-direction: column;
+}
+.auth input{
+  width: 200px;
+  border: none;
+  border-bottom: 2px solid green;
+  background-color: #000000;
+  color: green;
+  font-size: 22px;
+  text-align: center;
+}
+.auth button{
+  all: unset;
+  cursor: pointer;
+  background-color: #000000;
+  margin-top: 10px ;
+  text-align: center;
+  font-size: 25px;
+  color: green;
+  width: 200px;
+}
+
+.chat_manipulation{
+  display: flex;
+  flex-direction: row;
   gap: 30px;
-  font-family: mainFont;
+  margin-top: 40px;
+}
+.chat_manipulation button{
+  all: unset;
+  cursor: pointer;
+}
+
+
+/* navigation */
+nav{
+  width: 100%;
+  margin-top: 15px;
+}
+nav ul {
+  all: unset;
+  min-width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+nav ul li{
+  all: unset;
+}
+nav ul li button{
+  all: unset;
+  margin-left: 15px;
+  font-size: 30px;
+  font-weight: 500;
+  cursor: pointer;
+  max-height: 30px;
+  overflow: hidden;
+  display: block;
+  z-index: 3;
+}
+nav ul li button img{
+  cursor: pointer;
+}
+.navigation div {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.navigation div a {
+  text-decoration: none;
+  color: green;
   font-size: 20px;
-  padding:8px 30px 6px 30px; 
-  border-radius: 12px;
+  font-weight: 500;
+}
+
+.navigation {
+  max-width: 0;
+  max-height:30px ;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  transition: max-width 0.6s ease;
+}
+
+.navigation.active {
+  max-width: 200px; /* Set an appropriate width */
+  max-height:30px ;
+}
+
+
+#logout{
+  all: unset;
+  width: 40px;
+  margin-right: 20px;
+}
+#logout img{
+  width: 100%;
+}
+
+/* photo.js */
+#photo_rout{
+  position: absolute;
+  top: 50px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+
+#showcreatefolder{
+all: unset;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 50%;
+  background-color: #000000;
+  padding: 20px;
+}
+#showcreatefolder img{
+  width: 40px;
+}
+
+.popup{
+  background-color: #2d2828;
+  padding: 20px 30px;
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: end;
+  flex-direction: column;
+  gap: 10px;
+}
+.popup input{
+  all: unset;
+  background-color: none;
+  border-bottom: 2px solid green ;
+}
+.popup div{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  font-size: 20px;
+}
+.popup_button{
+  all: unset;
+  cursor: pointer;
+  margin-left:20px ;
+  font-size: 20px;
+}
+.folder_cont {
+  margin-left: 0px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  grid-gap:20px ;
+}
+
+@media screen and (min-width: 768px) {
+  .folder_cont {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .folder_cont {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.folder{
+  all: unset;
+  font-size: 25px;
+  cursor: pointer;
+}
+.folder img{
+  width: 100%;
+}
+.folder div{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.folder div span{
+}
+
+
+
+
+
+.chat_rout{
+  width: 100%;
+  height: 100%;
 
 }
-.logIn-btn:hover{
-  background: #1d232d;
-  transition: 0.5s;
+
+.fav_chat{
+  margin-left:20px ;
+  margin-top: 20px;
+
 }
-.logIn-btn img{
-  width: 30px;
+.fav_chat li {
+  font-size: 25px;
+  width: calc(100% - 20px);
+}
+.fav_chat :hover{
+  background-color: #2d2828;
+}
+.fav_chat li button{
+  all: unset;
+  font-size: 20px;
+  position: absolute;
+  right: 20px;
+}
+.a_imgs div {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 30px;
+  margin-top: 40px;
+  overflow-x: auto; /* Enable horizontal scrolling on mobile and desktop */
+}
+
+.a_imgs img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  flex-grow: 1;
+}
+
+/* Media query for desktop devices */
+@media (min-width: 768px) {
+  .a_imgs div {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 40px;
+    margin-top: 40px;
+    overflow: visible; /* Disable scrolling on desktop */
+  }
+
+  .a_imgs img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    min-width: 0; /* Add this property */
+    min-height: 0; /* Add this property */
+  }
+
+  .a_imgs::-webkit-scrollbar {
+    display: none; /* Hide scrollbar on desktop */
+  }
+}
+
+
+
+
+.photos ul li {
+  font-size: 30px;
+}
+.photos ul li button{
+  cursor: pointer;
 }

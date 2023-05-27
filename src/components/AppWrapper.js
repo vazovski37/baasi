@@ -13,10 +13,17 @@ export const AppWrapper = ({ children, isAuth, setIsAuth, setIsInChat,  }) => {
   return (
     <div className="App">
       <div className="app-header">
-        <h1> Chat App </h1>
+        <h1>ბაასი</h1>
+
+        <nav className="navigation" >
+          <ul>
+            <li><button> chat </button></li>
+            <li><button> photos </button></li>
+          </ul>
+        </nav>
       {isAuth && (
         <div className="sign-out">
-          <button onClick={signUserOut}> Sign Out</button>
+          <button onClick={signUserOut}>სისტემიდან გასვლა</button>
         </div>
       )}
       </div>

@@ -16,7 +16,7 @@ import {
 
 import "../styles/Chat.css";
 
-export const Chat = ({ room, handleLeaveRoom, userinfo }) => {
+export const Inroom = ({ room, handleLeaveRoom, userinfo }) => {
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");

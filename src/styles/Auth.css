@@ -1,25 +1,32 @@
 .auth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 150px;
 }
 
 .auth input{
-    flex: 1;
     border: none;
     outline: none;
     background: transparent;
     font-size: 16px;
     color: green;
     padding: 10px;
+    width:200px;
     border-bottom: 2px solid green;
+    margin: auto;
 }
 
-.auth button {
-    display: inline;
+.logIn-btn{
     width: 200px;
     height: 50px;
     border: none;
+    margin-top: 20px;
     background-color: #000000;
     color: white;
     border-radius: 8px;
     font-size: 18px;
     cursor: pointer;
 }
+

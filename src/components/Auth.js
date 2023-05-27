@@ -30,7 +30,6 @@ export const Auth = ({ setIsAuth,  }) => {
 
   return (
     <div className="auth">
-      <label>კოდური სიტყვა {">>>"}</label>
       <input type="text" value={secretWord} onChange={handleSecretWordChange} />
       <button onClick={checkSecretWord} className="logIn-btn">
         შესვლა

@@ -1,0 +1,407 @@
+import React, { useState, useEffect } from "react";
+import { Chat } from "./components/Chat";
+import { Auth } from "./components/Auth.js";
+import { AppWrapper } from "./components/AppWrapper";
+import Cookies from "universal-cookie";
+import "./App.css";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "./firebase-config.js";
+
+const cookies = new Cookies();
+
+function ChatApp() {
+  const user = cookies.get("user");
+  const [isAuth, setIsAuth] = useState(cookies.get("auth-token"));
+  const [isInChat, setIsInChat] = useState(null);
+  const [room, setRoom] = useState("");
+  const [newUser, setNewUser] = useState({
+    isadmin: false,
+    name: "",
+    favrooms: [],
+  });
+  const [newWord, setNewWord] = useState("");
+  const [userinfo, setUserinfo] = useState(null);
+  const [newfavchat, setNewfavchat] = useState("");
+
+  const fetchUser = async (userId) => {
+    try {
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        setUserinfo(userDoc.data());
+        console.log(userinfo);
+      } else {
+        console.log("User not found");
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser(user);
+  }, [user]);
+
+  const handleLeaveRoom = () => {
+    setIsInChat(false);
+    setRoom("");
+  };
+
+  const handleAddUser = async () => {
+    if (userinfo && userinfo.isadmin) {
+      try {
+        const newUserDoc = doc(db, "users", newWord);
+        await setDoc(newUserDoc, {
+          isadmin: newUser.isadmin,
+          name: newUser.name,
+          favrooms: newUser.favrooms,
+        });
+        alert("New user added successfully");
+      } catch (error) {
+        console.error("Error adding user:", error);
+      }
+    }
+  };
+
+  const handleCheckboxChange = (e) => {
+    setNewUser((prevUser) => ({
+      ...prevUser,
+      isadmin: e.target.checked,
+    }));
+  };
+
+  const handleNameChange = (e) => {
+    setNewUser((prevUser) => ({
+      ...prevUser,
+      name: e.target.value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleAddUser();
+  };
+
+  const addFavChatToUser = async () => {
+    if (newfavchat) {
+      try {
+        const userDocRef = doc(db, "users", user);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userObj = userDoc.data();
+          const updatedFavRooms = [...userObj.favrooms, newfavchat];
+          await setDoc(userDocRef, { ...userObj, favrooms: updatedFavRooms });
+          console.log("Chat added to favrooms");
+          setUserinfo((prevUserInfo) => ({
+            ...prevUserInfo,
+            favrooms: updatedFavRooms,
+          }));
+          setNewfavchat("");
+        } else {
+          console.log("User not found");
+        }
+      } catch (error) {
+        console.error("Error adding chat to favrooms:", error);
+      }
+    }
+  };
+
+  const removeChatFromFavrooms = async (chatName) => {
+    if (userinfo) {
+      try {
+        const userDocRef = doc(db, "users", user);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userObj = userDoc.data();
+          const updatedFavRooms = userObj.favrooms.filter(
+            (roomName) => roomName !== chatName
+          );
+          await setDoc(userDocRef, { ...userObj, favrooms: updatedFavRooms });
+          console.log("Chat removed from favrooms");
+          setUserinfo((prevUserInfo) => ({
+            ...prevUserInfo,
+            favrooms: updatedFavRooms,
+          }));
+        } else {
+          console.log("User not found");
+        }
+      } catch (error) {
+        console.error("Error removing chat from favrooms:", error);
+      }
+    }
+  };
+
+  if (!isAuth) {
+    return (
+      <AppWrapper
+        isAuth={isAuth}
+        setIsAuth={setIsAuth}
+        setIsInChat={setIsInChat}
+      >
+        <Auth setIsAuth={setIsAuth} />
+      </AppWrapper>
+    );
+  }
+
+  return (
+    <AppWrapper isAuth={isAuth} setIsAuth={setIsAuth} setIsInChat={setIsInChat}>
+      {!isInChat ? (
+        <div className="room">
+          <label>სიტყვა:</label>
+          <input onChange={(e) => setRoom(e.target.value)} />
+
+          <button onClick={() => setIsInChat(true)}>ჩატში შესვლა</button>
+
+          <br />
+          <br />
+          <br />
+          <br />
+
+          <div className="fav_chats">
+            {userinfo &&
+              userinfo.favrooms &&
+              userinfo.favrooms.map((roomName, index) => (
+                <div key={index} className="fav_chat">
+                  <li>
+                  <span onClick={()=>{ setRoom(roomName); setIsInChat(true) }} >{roomName}</span>
+                  <button onClick={() => removeChatFromFavrooms(roomName)}>
+                    Remove
+                  </button>
+
+                  </li>
+                </div>
+              ))}
+
+            <input
+              placeholder="add fav chat"
+              onChange={(e) => {
+                setNewfavchat(e.target.value);
+              }}
+              value={newfavchat}
+            ></input>
+            <button onClick={() => addFavChatToUser()}>Add</button>
+          </div>
+
+          <br />
+          <br />
+          <br />
+          <br />
+
+          {userinfo && userinfo.isadmin && (
+            <form onSubmit={handleSubmit}>
+              <h2>Add User</h2>
+              <div>
+                <label>Code Word:</label>
+                <input onChange={(e) => setNewWord(e.target.value)} />
+              </div>
+              <div>
+                <label>Name:</label>
+                <input
+                  type="text"
+                  value={newUser.name}
+                  onChange={handleNameChange}
+                />
+              </div>
+              <div>
+                <label>
+                  Is Admin:
+                  <input
+                    type="checkbox"
+                    checked={newUser.isadmin}
+                    onChange={handleCheckboxChange}
+                  />
+                </label>
+              </div>
+              <button type="submit">Submit</button>
+            </form>
+          )}
+        </div>
+      ) : (
+        <Chat room={room} handleLeaveRoom={handleLeaveRoom} userinfo={userinfo} />
+      )}
+    </AppWrapper>
+  );
+}
+
+export default ChatApp;
+
+
+
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+
+export const AppWrapper = ({ children, isAuth, setIsAuth, setIsInChat,  }) => {
+  const signUserOut = async () => {
+    cookies.remove("auth-token");
+    cookies.remove("user")
+    setIsAuth(false);
+    setIsInChat(false);
+  };
+
+  return (
+    <div className="App">
+      <div className="app-header">
+        <h1>ბაასი</h1>
+      {isAuth && (
+        <div className="sign-out">
+          <button onClick={signUserOut}>სისტემიდან გასვლა</button>
+        </div>
+      )}
+      </div>
+
+      <div className="app-container">{children}</div>
+    </div>
+  );
+};
+
+
+import { useState } from "react";
+import { getDoc, doc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { auth, db } from "../firebase-config.js";
+import "../styles/Auth.css";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+
+export const Auth = ({ setIsAuth,  }) => {
+  const [secretWord, setSecretWord] = useState("");
+
+  const checkSecretWord = async () => {
+    const secretWordRef = doc(db, "users", secretWord);
+    const secretWordDoc = await getDoc(secretWordRef);
+
+    
+    if (secretWordDoc.exists()) {
+      cookies.set("auth-token", true);
+      cookies.set("user", secretWord)
+      setIsAuth(true);
+    } else {
+      alert("gaiare dzmaa");
+    }
+  };
+
+  const handleSecretWordChange = (event) => {
+    setSecretWord(event.target.value);
+  };
+
+  return (
+    <div className="auth">
+      <label>კოდური სიტყვა {">>>"}</label>
+      <input type="text" value={secretWord} onChange={handleSecretWordChange} />
+      <button onClick={checkSecretWord} className="logIn-btn">
+        შესვლა
+      </button>
+    </div>
+  );
+};
+
+
+
+
+import React, { useRef, useState, useEffect } from "react";
+import { db, auth } from "../firebase-config";
+import {
+  collection,
+  addDoc,
+  where,
+  serverTimestamp,
+  onSnapshot,
+  query,
+  orderBy,
+  updateDoc,
+  arrayUnion,
+  getDoc,
+  doc,
+} from "firebase/firestore";
+
+import "../styles/Chat.css";
+
+export const Chat = ({ room, handleLeaveRoom, userinfo }) => {
+
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const messagesRef = collection(db, "messages");
+  const messagesContainerRef = useRef(null);
+  const lowestMessageRef = useRef(null);
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    container.scrollTop = container.scrollHeight;
+  }, [messages]);
+
+  useEffect(() => {
+    const queryMessages = query(
+      messagesRef,
+      where("room", "==", room),
+      orderBy("createdAt")
+    );
+    const unsubscribe = onSnapshot(queryMessages, (snapshot) => {
+      let messages = [];
+      snapshot.forEach((doc) => {
+        messages.push({ ...doc.data(), id: doc.id });
+      });
+      setMessages(messages);
+    });
+
+    return () => unsubscribe();
+  }, [room]);
+
+  useEffect(() => {
+    const lowestMessage = messages[messages.length - 1];
+    lowestMessageRef.current = lowestMessage;
+  }, [messages]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (newMessage === "") return;
+    await addDoc(messagesRef, {
+      text: newMessage,
+      createdAt: serverTimestamp(),
+      user: userinfo.name,
+      room,
+    });
+
+    setNewMessage("");
+  };
+
+
+  
+
+  return (
+    <div className="chat-app">
+      <div className="header">
+        <h1>&lt; {room} /&gt;</h1>
+        <button onClick={handleLeaveRoom}>&lt; Leave Room /&gt;</button>
+      </div>
+      <div className="messages" ref={messagesContainerRef}>
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`message ${message === lowestMessageRef.current ? "lowest-message" : ""}`}
+          >
+            <span className="user" style={message.user === userinfo.name ? { color: "#555555" } : { color: "#333" }}>
+              &lt;{message.user} /&gt;
+            </span>
+            {message.text}
+          </div>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit} className="new-message-form">
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(event) => setNewMessage(event.target.value)}
+          className="new-message-input"
+          placeholder="Type your message here..."
+        />
+        <button type="submit" className="send-button">
+          {">>>"}
+        </button>
+      </form>
+    </div>
+  );
+};
